@@ -1,4 +1,4 @@
-package main
+package goson
 
 import (
 	"encoding/json"
