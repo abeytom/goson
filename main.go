@@ -31,6 +31,22 @@ func (o *MapNode) GetValue(keys ...string) *ValueNode {
 	return asValueNode(o.Get(keys...))
 }
 
+func (o *MapNode) GetString(keys ...string) string {
+	node := asValueNode(o.Get(keys...))
+	if node == nil {
+		return ""
+	}
+	return node.String()
+}
+
+func (o *MapNode) GetToString(keys ...string) string {
+	node := asValueNode(o.Get(keys...))
+	if node == nil {
+		return ""
+	}
+	return node.ToString()
+}
+
 func (o *MapNode) GetArray(keys ...string) *ArrayNode {
 	return asArrayNode(o.Get(keys...))
 }
@@ -131,6 +147,7 @@ func ParseFileToMap(fp string) (*MapNode, error) {
 	}
 	return nil, errors.Errorf("The type is not a map %T", jsonNode)
 }
+
 func ParseFile(fp string) (JsonNode, error) {
 	file, err := os.Open(fp)
 	if err != nil {
@@ -170,17 +187,17 @@ func wrap(in interface{}) (JsonNode, error) {
 	return toValueNode(in), nil
 }
 
-func toValueNode(in interface{}) JsonNode {
+func toValueNode(in interface{}) *ValueNode {
 	return &ValueNode{Val: in}
 }
 
-func toArrayNode(items []interface{}) JsonNode {
+func toArrayNode(items []interface{}) *ArrayNode {
 	return &ArrayNode{
 		Objects: items,
 	}
 }
 
-func toObjectNode(in map[string]interface{}) JsonNode {
+func toObjectNode(in map[string]interface{}) *MapNode {
 	return &MapNode{
 		Object: in,
 	}
