@@ -47,6 +47,16 @@ func (o *MapNode) GetToString(keys ...string) string {
 	return node.ToString()
 }
 
+func (o *MapNode) DeleteKeys(keys ...string) {
+	for _, key := range keys {
+		delete(o.Object, key)
+	}
+}
+
+func (o *MapNode) Set(key string, value interface{}) {
+	o.Object[key] = value
+}
+
 func (o *MapNode) GetArray(keys ...string) *ArrayNode {
 	return asArrayNode(o.Get(keys...))
 }
