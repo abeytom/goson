@@ -9,6 +9,7 @@ import (
 )
 
 type JsonNode interface {
+	isGoson() bool
 }
 
 type MapNode struct {
@@ -21,6 +22,18 @@ type ArrayNode struct {
 
 type ValueNode struct {
 	Val interface{}
+}
+
+func (o *MapNode) isGoson() bool {
+	return true
+}
+
+func (v *ArrayNode) isGoson() bool {
+	return true
+}
+
+func (v *ValueNode) isGoson() bool {
+	return true
 }
 
 func (o *MapNode) GetMap(keys ...string) *MapNode {
@@ -91,6 +104,38 @@ func (v *ArrayNode) Items() []JsonNode {
 		items = append(items, node)
 	}
 	return items
+}
+
+func IsMap(value JsonNode) bool {
+	if value == nil {
+		return false
+	}
+	switch value.(type) {
+	case *MapNode:
+		return true
+	}
+	return false
+}
+func IsArray(value JsonNode) bool {
+	if value == nil {
+		return false
+	}
+	switch value.(type) {
+	case *ArrayNode:
+		return true
+	}
+	return false
+}
+
+func IsValue(value JsonNode) bool {
+	if value == nil {
+		return false
+	}
+	switch value.(type) {
+	case *ValueNode:
+		return true
+	}
+	return false
 }
 
 func asMapNode(value JsonNode) *MapNode {
@@ -184,6 +229,19 @@ func ParseBytes(b []byte) (JsonNode, error) {
 	return wrap(in)
 }
 
+func ParseObject(in interface{}) (JsonNode, error) {
+	if in == nil {
+		return nil, errors.New("input is nil")
+	}
+	switch in.(type) {
+	case []interface{}:
+		return toArrayNode(in.([]interface{})), nil
+	case map[string]interface{}:
+		return toObjectNode(in.(map[string]interface{})), nil
+	}
+	return nil, errors.Errorf("unexpected input. only `[]interface` or `map[string]interface{}` is expected")
+}
+
 func wrap(in interface{}) (JsonNode, error) {
 	if in == nil {
 		return nil, errors.New("input is nil")
@@ -221,4 +279,56 @@ func AsMap(n JsonNode) *MapNode {
 }
 func AsArray(n JsonNode) *ArrayNode {
 	return asArrayNode(n)
+}
+func FindAll(n JsonNode, keys ...string) []JsonNode {
+	return find(n, true, keys...)
+}
+func Find(n JsonNode, keys ...string) JsonNode {
+	nodes := find(n, false, keys...)
+	if len(nodes) == 0 {
+		return nil
+	}
+	return nodes[0]
+}
+
+func find(n JsonNode, all bool, keys ...string) []JsonNode {
+	if IsArray(n) {
+		var items []JsonNode
+		for _, node := range AsArray(n).Items() {
+			item := find(node, all, keys...)
+			if item == nil {
+				continue
+			}
+			items = append(items, item...)
+			if !all {
+				return items
+			}
+		}
+		return items
+	} else if IsMap(n) {
+		mn := AsMap(n)
+		object := mn.Object
+		if item := object[keys[0]]; item != nil {
+			w, _ := wrap(item)
+			if len(keys) == 1 {
+				return []JsonNode{w}
+			}
+			return find(w, all, keys[1:]...)
+		}
+		var items []JsonNode
+		for _, v := range object {
+			w, _ := wrap(v)
+			item := find(w, all, keys...)
+			if item == nil {
+				continue
+			}
+			items = append(items, item...)
+			if !all {
+				return items
+			}
+		}
+		return items
+	} else {
+		return nil
+	}
 }

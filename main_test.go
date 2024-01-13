@@ -73,3 +73,37 @@ func TestValue(t *testing.T) {
 		assert.Equal(t, "10", get)
 	}
 }
+
+func TestFind(t *testing.T) {
+	n, err := ParseFile("test-data/data-1.json")
+	assert.Nil(t, err)
+	{
+		node := Find(n, "menu")
+		assert.NotNil(t, AsMap(node))
+		assert.Equal(t, "file", AsMap(node).GetString("id"))
+	}
+	{
+		node := Find(n, "popup")
+		assert.NotNil(t, AsMap(node))
+	}
+	{
+		node := Find(n, "menuitem")
+		assert.NotNil(t, AsArray(node))
+	}
+	{
+		node := Find(n, "menuitem", "value")
+		assert.Equal(t, "New", AsValue(node).String())
+	}
+	{
+		nodes := FindAll(n, "menuitem", "value")
+		assert.Equal(t, 3, len(nodes))
+		assert.Equal(t, "New", AsValue(nodes[0]).String())
+		assert.Equal(t, "Open", AsValue(nodes[1]).String())
+		assert.Equal(t, "Save", AsValue(nodes[2]).String())
+
+	}
+	{
+		nodes := FindAll(n, "menuitem", "onclick")
+		assert.Equal(t, 4, len(nodes))
+	}
+}
