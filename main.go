@@ -308,14 +308,18 @@ func find(n JsonNode, all bool, keys ...string) []JsonNode {
 	} else if IsMap(n) {
 		mn := AsMap(n)
 		object := mn.Object
+		var items []JsonNode
 		if item := object[keys[0]]; item != nil {
 			w, _ := wrap(item)
 			if len(keys) == 1 {
-				return []JsonNode{w}
+				items = append(items, w)
+			} else {
+				findItems := find(w, all, keys[1:]...)
+				if len(findItems) > 0 {
+					items = append(items, findItems...)
+				}
 			}
-			return find(w, all, keys[1:]...)
 		}
-		var items []JsonNode
 		for _, v := range object {
 			w, _ := wrap(v)
 			item := find(w, all, keys...)
