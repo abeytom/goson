@@ -27,7 +27,15 @@
             "Save",
             "Create"
           ],
-          "onclick": "SaveDoc()"
+          "onclick": "SaveDoc()",
+          "children": {
+            "menuitem": {
+              "value": "SaveDocChild",
+              "menuitem": {
+                "value": "SaveDocGChild"
+              }
+            }
+          }
         }
       ]
     }

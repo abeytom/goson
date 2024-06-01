@@ -96,10 +96,13 @@ func TestFind(t *testing.T) {
 	}
 	{
 		nodes := FindAll(n, "menuitem", "value")
-		assert.Equal(t, 3, len(nodes))
+		assert.Equal(t, 5, len(nodes))
 		assert.Equal(t, "New", AsValue(nodes[0]).String())
 		assert.Equal(t, "Open", AsValue(nodes[1]).String())
 		assert.Equal(t, "Save", AsValue(nodes[2]).String())
+		//fixme we have an map ordering problem here. revisit later
+		assert.Equal(t, "SaveDocChild", AsValue(nodes[3]).String())
+		assert.Equal(t, "SaveDocGChild", AsValue(nodes[4]).String())
 
 	}
 	{
