@@ -3,6 +3,7 @@
     "id": "file",
     "value": "File",
     "order": 10,
+    "nullObject": null,
     "popup": {
       "items": [
         "New",
@@ -12,7 +13,10 @@
       "menuitem": [
         {
           "value": "New",
-          "onclick": "CreateDoc()"
+          "onclick": "CreateDoc()",
+          "nullInside": {
+            "nullObject": null
+          }
         },
         {
           "value": "Open",

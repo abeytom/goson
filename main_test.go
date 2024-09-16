@@ -109,4 +109,21 @@ func TestFind(t *testing.T) {
 		nodes := FindAll(n, "menuitem", "onclick")
 		assert.Equal(t, 4, len(nodes))
 	}
+
+	{
+		nodes := FindAll(n, "nullObject")
+		assert.Nil(t, nodes)
+	}
+	{
+		nodes := FindAll(n, "nullObject", "nullValue")
+		assert.Nil(t, nodes)
+	}
+	{
+		nodes := FindAll(n, "nullInside", "nullObject")
+		assert.Nil(t, nodes)
+	}
+	{
+		nodes := FindAll(n, "nullInside")
+		assert.Equal(t, 1, len(nodes))
+	}
 }

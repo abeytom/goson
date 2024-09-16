@@ -310,6 +310,9 @@ func find(n JsonNode, all bool, keys ...string) []JsonNode {
 		object := mn.Object
 		var items []JsonNode
 		for k, v := range object {
+			if v == nil {
+				continue
+			}
 			w, _ := wrap(v)
 			if k == keys[0] {
 				if len(keys) == 1 {
