@@ -78,6 +78,10 @@ func TestFind(t *testing.T) {
 	n, err := ParseFile("test-data/data-1.json")
 	assert.Nil(t, err)
 	{
+		nodes := FindAll(n, "dropdown")
+		assert.Equal(t, 2, len(nodes))
+	}
+	{
 		node := Find(n, "menu")
 		assert.NotNil(t, AsMap(node))
 		assert.Equal(t, "file", AsMap(node).GetString("id"))

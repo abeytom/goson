@@ -4,6 +4,13 @@
     "value": "File",
     "order": 10,
     "nullObject": null,
+    "dropdown": {
+      "item1": {
+        "dropdown": {
+          "name": "key"
+        }
+      }
+    },
     "popup": {
       "items": [
         "New",

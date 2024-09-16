@@ -322,8 +322,8 @@ func find(n JsonNode, all bool, keys ...string) []JsonNode {
 					if len(findItems) > 0 {
 						items = append(items, findItems...)
 					}
+					continue
 				}
-				continue
 			}
 			item := find(w, all, keys...)
 			if item == nil {
