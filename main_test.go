@@ -131,3 +131,37 @@ func TestFind(t *testing.T) {
 		assert.Equal(t, 1, len(nodes))
 	}
 }
+
+func TestNilOrEmpty(t *testing.T) {
+	n, err := ParseFile("test-data/data-1.json")
+	assert.Nil(t, err)
+	m := AsMap(n)
+	{
+		value := m.Get("menu", "nullObject", "key")
+		assert.Nil(t, value)
+	}
+	{
+		value := m.GetString("menu", "emptyStr")
+		assert.Equal(t, "", value)
+	}
+	{
+		value := m.GetValue("menu", "emptyInt").Value()
+		assert.Equal(t, float64(0), value)
+	}
+
+}
+
+func TestPanic(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("The code did not panic")
+		}
+	}()
+	n, err := ParseFile("test-data/data-1.json")
+	m := AsMap(n)
+	assert.Nil(t, err)
+	{
+		m.Get("menu", "value", "key")
+		assert.Fail(t, "supposed to panic")
+	}
+}

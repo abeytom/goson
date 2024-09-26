@@ -175,7 +175,7 @@ func (o *MapNode) Get(keys ...string) JsonNode {
 	respMap := o.Object
 	for i, key := range keys {
 		value, exists := respMap[key]
-		if !exists {
+		if !exists || value == nil {
 			return nil
 		}
 		if i == len(keys)-1 {
@@ -185,7 +185,12 @@ func (o *MapNode) Get(keys ...string) JsonNode {
 			}
 			return node
 		}
-		respMap = value.(map[string]interface{})
+		var ok bool
+		respMap, ok = value.(map[string]interface{})
+		if !ok {
+			// this is a user error, so panic
+			panic(fmt.Sprintf("key [%v] is not a object node", key))
+		}
 	}
 	return nil
 }

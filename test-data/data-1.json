@@ -4,6 +4,8 @@
     "value": "File",
     "order": 10,
     "nullObject": null,
+    "emptyStr": "",
+    "emptyInt": 0,
     "dropdown": {
       "item1": {
         "dropdown": {
