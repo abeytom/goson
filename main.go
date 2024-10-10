@@ -91,6 +91,24 @@ func (v *ValueNode) ToString() string {
 	return fmt.Sprintf("%v", v.Val)
 }
 
+func (v *ArrayNode) ItemsAsMap() []*MapNode {
+	if len(v.Objects) == 0 {
+		return nil
+	}
+	var items []*MapNode
+	for _, object := range v.Objects {
+		node, err := wrap(object)
+		if err != nil {
+			continue
+		}
+		mapNode := asMapNode(node)
+		if mapNode != nil {
+			items = append(items, mapNode)
+		}
+	}
+	return items
+}
+
 func (v *ArrayNode) Items() []JsonNode {
 	if len(v.Objects) == 0 {
 		return nil

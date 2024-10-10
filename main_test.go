@@ -165,3 +165,17 @@ func TestPanic(t *testing.T) {
 		assert.Fail(t, "supposed to panic")
 	}
 }
+
+func TestAsMapItems(t *testing.T) {
+	m, err := ParseFileToMap("test-data/data-1.json")
+	assert.Nil(t, err)
+	array := m.GetArray("menu", "popup", "menuitem")
+	mapItems := array.ItemsAsMap()
+	assert.Equal(t, 4, len(mapItems))
+	for _, node := range mapItems {
+		assert.True(t, IsMap(node))
+	}
+	array = m.GetArray("menu", "popup", "items")
+	assert.Equal(t, 0, len(array.ItemsAsMap()))
+
+}
