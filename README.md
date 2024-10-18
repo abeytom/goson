@@ -40,9 +40,12 @@ func main() {
 		strValue := node.GetToString("order") // gets "10"
 	}
 
-	// update
+	// update [mutable]
 	var val interface{} // = ...
 	mapNode.GetMap("menu").Set("key", val)
+	
+	//delete [mutable]. The key1 & key2 are not nested; they are siblings
+	mapNode.DeleteKeys("key1","key2")
 
 	// use json.Marshall or yaml.Marshall to split the contents
 	b, err := json.Marshal(mapNode.Object)
