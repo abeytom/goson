@@ -47,7 +47,7 @@ func main() {
 	//delete [mutable]. The key1 & key2 are not nested; they are siblings
 	mapNode.DeleteKeys("key1","key2")
 
-	// use json.Marshall or yaml.Marshall to split the contents
+	// use json.Marshall or yaml.Marshall to write the contents
 	b, err := json.Marshal(mapNode.Object)
 	// or 
 	b, err := json.Marshal(mapNode.GetMap("menu").Object)
