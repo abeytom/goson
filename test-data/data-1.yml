@@ -1,0 +1,34 @@
+menu:
+  id: file
+  value: File
+  order: 10
+  nullObject: null
+  emptyStr: ""
+  emptyInt: 0
+  dropdown:
+    item1:
+      dropdown:
+        name: key
+  popup:
+    items:
+      - New
+      - Open
+      - Save
+    menuitem:
+      - value: New
+        onclick: CreateDoc()
+        nullInside:
+          nullObject:
+      - value: Open
+        onclick: OpenDoc()
+      - value: Save
+        onclick: SaveDoc()
+      - values:
+          - Save
+          - Create
+        onclick: SaveDoc()
+        children:
+          menuitem:
+            value: SaveDocChild
+            menuitem:
+              value: SaveDocGChild

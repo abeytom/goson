@@ -29,6 +29,29 @@ func TestMap(t *testing.T) {
 
 }
 
+func TestMapYaml(t *testing.T) {
+	mapNode, err := ParseYamlFileToMap("test-data/data-1.yml")
+	if err != nil {
+		panic(err)
+	}
+	{
+		popup := mapNode.GetMap("menu", "popup")
+		assert.NotNil(t, popup)
+		assert.IsType(t, &MapNode{}, popup)
+	}
+	{
+		popup := mapNode.GetMap("menu", "popup", "items")
+		assert.Nil(t, popup)
+	}
+	{
+		items := mapNode.GetArray("menu", "popup", "items")
+		assert.NotNil(t, items)
+		assert.IsType(t, &ArrayNode{}, items)
+		assert.Equal(t, 3, len(items.Items()))
+		assert.Equal(t, "Open", AsValue(items.Items()[1]).String())
+	}
+}
+
 func TestValue(t *testing.T) {
 	mapNode, err := ParseFileToMap("test-data/data-1.json")
 	if err != nil {
@@ -177,5 +200,28 @@ func TestAsMapItems(t *testing.T) {
 	}
 	array = m.GetArray("menu", "popup", "items")
 	assert.Equal(t, 0, len(array.ItemsAsMap()))
+}
 
+func TestAsMapEntries(t *testing.T) {
+	m, err := ParseFileToMap("test-data/data-1.json")
+	assert.Nil(t, err)
+	count := 0
+	found := false
+	for k, v := range m.GetMap("menu").EntriesAsMap() {
+		assert.NotEqual(t, k, "id")
+		assert.NotEqual(t, k, "nullObject")
+		assert.NotEqual(t, k, "emptyStr")
+		if k == "dropdown" {
+			assert.Equal(t, "key", v.GetString("item1", "dropdown", "name"))
+			found = true
+		}
+		count++
+	}
+	assert.Equal(t, 2, count)
+	assert.True(t, found)
+
+	asMap := m.GetMap("menu").EntriesAsMap()
+	assert.Equal(t, 2, len(asMap))
+	assert.Equal(t, "key", asMap["dropdown"].GetString("item1", "dropdown", "name"))
+	assert.Equal(t, 3, len(asMap["popup"].GetArray("items").Items()))
 }
