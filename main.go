@@ -75,6 +75,22 @@ func (o *MapNode) GetArray(keys ...string) *ArrayNode {
 	return asArrayNode(o.Get(keys...))
 }
 
+func (o *MapNode) GetStringArray(keys ...string) []string {
+	array := asArrayNode(o.Get(keys...))
+	if array == nil {
+		return nil
+	}
+	var items []string
+	for _, item := range array.Items() {
+		valNode := asValueNode(item)
+		if valNode == nil {
+			continue
+		}
+		items = append(items, valNode.String())
+	}
+	return items
+}
+
 func (o *MapNode) GetArrayOrEmpty(keys ...string) *ArrayNode {
 	array := asArrayNode(o.Get(keys...))
 	if array != nil {
@@ -97,7 +113,12 @@ func (v *ValueNode) String() string {
 }
 
 func (v *ValueNode) ToString() string {
-	return fmt.Sprintf("%v", v.Val)
+	s, ok := v.Val.(string)
+	if ok {
+		return s
+	} else {
+		return fmt.Sprintf("%v", v.Val)
+	}
 }
 
 func (v *ArrayNode) ItemsAsMap() []*MapNode {
@@ -125,6 +146,48 @@ func (v *ArrayNode) Items() []JsonNode {
 			continue
 		}
 		items = append(items, node)
+	}
+	return items
+}
+
+func (v *ArrayNode) ExtractValueArrayToStr(key string) []string {
+	if len(v.Objects) == 0 {
+		return nil
+	}
+	var items []string = make([]string, 0)
+	for _, object := range v.Objects {
+		mapNode := ParseObjectAsMap(object)
+		if mapNode == nil {
+			continue
+		}
+		val := mapNode.GetToString(key)
+		if len(val) > 0 {
+			items = append(items, val)
+		}
+	}
+	return items
+}
+
+func (v *ArrayNode) ExtractValueMapToStr(keys ...string) []map[string]string {
+	if len(v.Objects) == 0 {
+		return nil
+	}
+	var items []map[string]string = make([]map[string]string, 0)
+	for _, object := range v.Objects {
+		mapNode := ParseObjectAsMap(object)
+		if mapNode == nil {
+			continue
+		}
+		m := make(map[string]string)
+		for _, key := range keys {
+			val := mapNode.GetToString(key)
+			if len(val) > 0 {
+				m[key] = val
+			}
+		}
+		if len(m) > 0 {
+			items = append(items, m)
+		}
 	}
 	return items
 }

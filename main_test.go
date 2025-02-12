@@ -198,7 +198,7 @@ func TestAsMapItems(t *testing.T) {
 	for _, node := range mapItems {
 		assert.True(t, IsMap(node))
 	}
-	array = m.GetArray("menu", "popup", "items")
+	array = m.GetArrayOrEmpty("menu", "popup", "items")
 	assert.Equal(t, 0, len(array.ItemsAsMap()))
 }
 

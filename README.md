@@ -30,28 +30,33 @@ func main() {
 	emptyStr := mapNode.GetString("menu", "not-exists", "not-exists-2") // gets ""
 
 	// iterate over an array
-	array := mapNode.GetArray("menu", "popup", "menuitem")
+	array := mapNode.GetArray("menu", "popup", "menuitem") 
+	// GetArray may return nil 
+	// so do a nil check on `array` or use mapNode.GetArrayOrEmpty
 	for _, node := range array.ItemsAsMap() {
 		strValue := node.GetString("value")
 	}
 
 	// iterate over map keys
-	for k, node := range mapNode.GetMap("menu").EntriesAsMap() {
+	menu := mapNode.GetMap("menu") 
+	// GetMap may return nil so do a nil check on `menu`
+	for k, node := range menu.EntriesAsMap() {
 		strValue := node.GetToString("order") // gets "10"
 	}
 
 	// update [mutable]
 	var val interface{} // = ...
 	mapNode.GetMap("menu").Set("key", val)
-	
+
 	//delete [mutable]. The key1 & key2 are not nested; they are siblings
-	mapNode.DeleteKeys("key1","key2")
+	mapNode.DeleteKeys("key1", "key2")
 
 	// use json.Marshall or yaml.Marshall to write the contents
 	b, err := json.Marshal(mapNode.Object)
 	// or 
 	b, err := json.Marshal(mapNode.GetMap("menu").Object)
 }
+
 ```
 
 See the [main_test.go](main_test.go) for more usage
